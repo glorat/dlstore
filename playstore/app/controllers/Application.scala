@@ -1,13 +1,13 @@
 package controllers
 
+import javax.inject._
 import net.glorat.cqrs._
 import net.glorat.cqrs.example._
-
 import play.api._
 import play.api.data.Forms._
 import play.api.data._
 import play.api.data.format.Formatter
-import play.api.mvc._
+import play.api.mvc.{MessagesActionBuilder, _}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,12 +36,15 @@ object CustomMappings {
   def uuid: Mapping[java.util.UUID] = Forms.of[java.util.UUID](uuidFormatter)
 }
 
-object Application extends Controller {
+class Application @Inject()(messagesAction: MessagesActionBuilder, components: ControllerComponents)
+  extends AbstractController(components) {
   // No command should take that long to run!
   // TODO: But make this all async!
   implicit val actorTimeout: akka.util.Timeout = 1 second
 
   implicit val ec:ExecutionContext = play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+  //val messagesAction: MessagesActionBuilder = MessagesActionBuilder
 
   val svcs = Environment
   val read = svcs.read
@@ -98,12 +101,14 @@ object Application extends Controller {
     Ok(views.html.index(items))
   }
 
-  def add = Action {
+  def add = messagesAction { implicit request: MessagesRequest[AnyContent] =>
     Ok(views.html.add(addForm))
   }
-  def changename = Action { Ok(views.html.changename(renameForm)) }
+  def changename = messagesAction { implicit request: MessagesRequest[AnyContent] =>
+    Ok(views.html.changename(renameForm))
+  }
 
-  def rename(id: String) = Action {
+  def rename(id: String) = messagesAction { implicit request: MessagesRequest[AnyContent] =>
     val id2 = java.util.UUID.fromString(id)
     val item = read.getInventoryItemDetails(id2)
     if (item.isDefined)
@@ -112,7 +117,7 @@ object Application extends Controller {
       NotFound
   }
 
-  def detail(id: String) = Action {
+  def detail(id: String) = messagesAction { implicit request: MessagesRequest[AnyContent] =>
     val id2 = java.util.UUID.fromString(id)
     val item = read.getInventoryItemDetails(id2)
     if (item.isDefined)
@@ -178,7 +183,7 @@ object Application extends Controller {
       })
 
   }
-  def doChangeName() = Action.async { implicit request =>
+  def doChangeName() = messagesAction.async { implicit request: MessagesRequest[AnyContent] =>
     renameForm.bindFromRequest.fold(
       formWithErrors => {
         val errs = formWithErrors.errors

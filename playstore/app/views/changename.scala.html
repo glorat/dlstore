@@ -1,4 +1,4 @@
-@(form : Form[net.glorat.cqrs.example.RenameInventoryItem])
+@(form : Form[net.glorat.cqrs.example.RenameInventoryItem])(implicit request: MessagesRequestHeader)
 
 @main("Rename item") {
 @helper.form(action = routes.Application.doChangeName) {

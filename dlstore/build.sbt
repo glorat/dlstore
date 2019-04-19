@@ -1,13 +1,13 @@
 
 name := "dlstore"
 
-version := "0.1.0"
+version := "0.2.0"
 
 organization := "net.glorat"
 
 description := "Ledger state machine framework backed by Kafka distributed ledger store"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.8"
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
@@ -15,7 +15,7 @@ resolvers += Resolver.bintrayRepo("cakesolutions", "maven")
 
 libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
-  "com.novus" %% "salat-core" % "1.9.8",
+  "com.github.salat" %% "salat" % "1.11.2",
   "joda-time" % "joda-time" % "2.2",
   "org.scalatest" %% "scalatest" % "3.0.4" % "test",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
