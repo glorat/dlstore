@@ -48,3 +48,5 @@ developers := List(
     url   = url("https://github.com/glorat")
   )
 )
+
+publishTo := sonatypePublishTo.value
