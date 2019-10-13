@@ -2,3 +2,4 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.7.0")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.5")
