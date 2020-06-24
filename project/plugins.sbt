@@ -3,16 +3,4 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.2")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-twirl" % "1.5.0")
 
-// web plugins
-//
-//addSbtPlugin("com.typesafe.sbt" % "sbt-coffeescript" % "1.0.0")
-//
-//addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.0.0")
-//
-//addSbtPlugin("com.typesafe.sbt" % "sbt-jshint" % "1.0.0")
-//
-//addSbtPlugin("com.typesafe.sbt" % "sbt-rjs" % "1.0.1")
-//
-//addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.0.0")
-//
-//addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.0.0")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.5")

@@ -141,7 +141,7 @@ class ReadModelFacade(db: BullShitDatabase) {
 
 class InventoryListView(db: BullShitDatabase) extends EventStreamReceiver //: Handles<InventoryItemCreated>, Handles<InventoryItemRenamed>, Handles<InventoryItemDeactivated>
 {
-  def handle(ce: CommitedEvent): Future[Unit] = {
+  def handle(ce: CommittedEvent): Future[Unit] = {
     ce.event match {
       case a: InventoryItemRenamed => handle(a, ce.streamRevision)
       case a: InventoryItemCreated => handle(a, ce.streamRevision)
@@ -168,7 +168,7 @@ class InventoryListView(db: BullShitDatabase) extends EventStreamReceiver //: Ha
 }
 class InventoryItemDetailView(db:BullShitDatabase) extends Logging with EventStreamReceiver {
 
-  def handle(ce: CommitedEvent): Future[Unit] = {
+  def handle(ce: CommittedEvent): Future[Unit] = {
 
     log.info(s"${ce.streamId} , ${ce.streamRevision} handled")
     ce.event match {

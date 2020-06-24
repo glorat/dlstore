@@ -5,10 +5,11 @@ import javax.inject.Inject
 import net.glorat.cqrs._
 import net.glorat.cqrs.example._
 import play.api.Logger
+
 import play.api.data.Forms._
 import play.api.data._
 import play.api.data.format.Formatter
-import play.api.mvc._
+import play.api.mvc.{MessagesActionBuilder, _}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
@@ -109,6 +110,7 @@ class Application @Inject()(cc: ControllerComponents)(implicit ec: ExecutionCont
   }
 
   def rename(id: String) = Action { implicit request =>
+
     val id2 = java.util.UUID.fromString(id)
     val item = read.getInventoryItemDetails(id2)
     if (item.isDefined)
@@ -183,7 +185,7 @@ class Application @Inject()(cc: ControllerComponents)(implicit ec: ExecutionCont
       })
 
   }
-  def doChangeName() = Action.async { implicit request =>
+  def doChangeName() = messagesAction.async { implicit request: MessagesRequest[AnyContent] =>
     renameForm.bindFromRequest.fold(
       formWithErrors => {
         val errs = formWithErrors.errors

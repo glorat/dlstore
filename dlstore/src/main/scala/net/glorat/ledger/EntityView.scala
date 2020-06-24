@@ -11,7 +11,7 @@ class EntityView(registry : DomainEvent=>AggregateRoot) extends EventStreamRecei
   var entities : Map[GUID, Memento] = Map()
 
 
-  override def handle(ce: CommitedEvent): Future[Unit] = {
+  override def handle(ce: CommittedEvent): Future[Unit] = {
     val id = ce.streamId
     // Ensure we have something in the cache
     val memento : Memento = if (entities.contains(id)) {

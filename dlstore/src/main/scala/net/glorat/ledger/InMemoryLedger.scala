@@ -4,7 +4,7 @@ import net.glorat.cqrs._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class InMemoryDispatcher(store:InMemoryLedger, var registrations: Seq[EventStreamReceiver])(implicit val ec:ExecutionContext)
+class InMemoryDispatcher(store:RepositoryExt, var registrations: Seq[EventStreamReceiver])(implicit val ec:ExecutionContext)
 extends Logging{
   private var pos = -1
 
@@ -12,7 +12,7 @@ extends Logging{
 
 
     log.debug("InMemoryDispatcher polling for more events")
-    val snap = store.commitedEvents
+    val snap = store.allCommittedEvents
     if (snap.size > pos) {
       val cms = snap.slice(pos+1, snap.size+1)
       log.debug("InMemoryDispatcher acquired {} more events", cms.size)
@@ -25,7 +25,7 @@ extends Logging{
     }
   }
 
-  def handle(ce: CommitedEvent): Future[Unit] = {
+  def handle(ce: CommittedEvent): Future[Unit] = {
     // Publish to registrations
     // These might be done in parallel!
     val all = registrations.map(_.handle(ce))
@@ -33,9 +33,11 @@ extends Logging{
   }
 }
 
-class InMemoryLedger(streamToRevision:Option[GUID=>Int], registry:DomainEvent=>AggregateRoot)(implicit val ec:ExecutionContext) extends Repository with Logging {
-  var commitedEvents: List[CommitedEvent] = List()
+class InMemoryLedger(streamToRevision:Option[GUID=>Int], registry:DomainEvent=>AggregateRoot)(implicit val ec:ExecutionContext) extends RepositoryExt with Logging {
+  var committedEvents: List[CommittedEvent] = List()
   val entityView = new EntityView(registry)
+
+  def allCommittedEvents = committedEvents
 
   override def save(aggregate: AggregateRoot, expectedVersion: Int): Future[Unit] = {
     if (streamToRevision.isDefined) {
@@ -50,10 +52,10 @@ class InMemoryLedger(streamToRevision:Option[GUID=>Int], registry:DomainEvent=>A
     var i = expectedVersion
     val cevs = evs.map(ev => {
       i += 1
-      CommitedEvent(ev, aggregate.id, i)
+      CommittedEvent(ev, aggregate.id, i)
     })
 
-    commitedEvents ++= cevs
+    committedEvents ++= cevs
 
     val foo = cevs.map(e => entityView.handle(e))
     Future.sequence(foo).map(_ => ())

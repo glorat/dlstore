@@ -1,7 +1,7 @@
 
 name := "dlstore"
 
-version := "0.1.0"
+version := "0.3.0"
 
 organization := "net.glorat"
 
@@ -16,12 +16,14 @@ resolvers += Resolver.bintrayRepo("cakesolutions", "maven")
 libraryDependencies ++= Seq(
   "com.github.salat" %% "salat-core" % "1.11.2",
   "joda-time" % "joda-time" % "2.2",
-  "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-  "ch.qos.logback" % "logback-classic" % "1.1.1",
+  "org.scalatest" %% "scalatest" % "3.0.4" % "test",
+  "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.akka" %% "akka-actor" % "2.5.3",
   "org.slf4j" % "log4j-over-slf4j" % "1.7.21" % "test",
   "net.cakesolutions" %% "scala-kafka-client" % "1.0.0",
-  "net.cakesolutions" %% "scala-kafka-client-testkit" % "1.0.0" % "test"
+  "net.cakesolutions" %% "scala-kafka-client-testkit" % "1.0.0" % "test",
+  "com.google.firebase" % "firebase-admin" % "6.13.0",
+  "org.json4s"   %% "json4s-jackson" % "3.6.7"
 )
 
 publishMavenStyle := true
@@ -47,3 +49,5 @@ developers := List(
     url   = url("https://github.com/glorat")
   )
 )
+
+publishTo := sonatypePublishTo.value

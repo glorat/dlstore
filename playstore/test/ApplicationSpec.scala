@@ -8,11 +8,12 @@
  * You can mock out a whole application including requests, plugins etc.
  * For more information, consult the wiki.
  */
-//class ApplicationSpec extends Specification {
+
+//class ApplicationSpec extends PlaySpec {
 //
 //  "Application" should {
 //
-//    "send 404 on a bad request" in new WithApplication{
+//    "send 404 on a bad request" {
 //      route(FakeRequest(GET, "/boum")) must beNone
 //    }
 //
@@ -24,4 +25,5 @@
 //      contentAsString(home) must contain ("Your new application is ready.")
 //    }
 //  }
+//
 //}

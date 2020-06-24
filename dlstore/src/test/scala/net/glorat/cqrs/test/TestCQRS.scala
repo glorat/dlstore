@@ -5,6 +5,7 @@ import kafka.server.KafkaConfig
 import net.glorat.cqrs._
 import net.glorat.cqrs.example._
 import net.glorat.ledger._
+import org.json4s.DefaultFormats
 import org.scalatest.{BeforeAndAfterAll, FlatSpec}
 
 import scala.concurrent.duration.Duration

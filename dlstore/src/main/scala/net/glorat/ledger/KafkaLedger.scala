@@ -31,7 +31,7 @@ class KafkaLedger(servers:String, topic:String, streamToRevision:Option[GUID=>In
     var i=expectedVersion
     val cevs = evs.map(ev => {
       i+=1
-      CommitedEvent(ev, aggregate.id, i)
+      CommittedEvent(ev, aggregate.id, i)
     })
 
     log.debug(s"Persisting ${cevs.size} events to Kafka...")
