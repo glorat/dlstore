@@ -9,3 +9,5 @@ scalaVersion := "2.12.8"
 libraryDependencies ++= Seq(
   //ws
 )
+
+libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test

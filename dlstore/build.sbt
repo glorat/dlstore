@@ -1,7 +1,7 @@
 
 name := "dlstore"
 
-version := "0.2.0"
+version := "0.3.0"
 
 organization := "net.glorat"
 
@@ -22,7 +22,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.5.3",
   "org.slf4j" % "log4j-over-slf4j" % "1.7.21" % "test",
   "net.cakesolutions" %% "scala-kafka-client" % "1.0.0",
-  "net.cakesolutions" %% "scala-kafka-client-testkit" % "1.0.0" % "test"
+  "net.cakesolutions" %% "scala-kafka-client-testkit" % "1.0.0" % "test",
+  "com.google.firebase" % "firebase-admin" % "6.13.0",
+  "org.json4s"   %% "json4s-jackson" % "3.6.7"
 )
 
 publishMavenStyle := true

@@ -1,7 +1,7 @@
 package net.glorat.ledger
 
 import cakesolutions.kafka.{KafkaConsumer, KafkaDeserializer}
-import net.glorat.cqrs.{CommitedEvent, EventStreamReceiver}
+import net.glorat.cqrs.{CommittedEvent, EventStreamReceiver}
 import org.apache.kafka.clients.consumer.OffsetResetStrategy
 
 import scala.collection.JavaConverters._
@@ -30,7 +30,7 @@ class KafkaEventDispatcher(servers:String, topic:String, var registrations: Seq[
 
     log.debug("KafkaEventDispatcher polling for more events")
     val records = consumer.poll(1000)
-    val cms = records.asScala.map(record => record.value.asInstanceOf[CommitedEvent]).toSeq
+    val cms = records.asScala.map(record => record.value.asInstanceOf[CommittedEvent]).toSeq
 
     if (cms.size > 0) {
       log.debug("KafkaEventDispatcher acquired {} more events", cms.size)
@@ -43,7 +43,7 @@ class KafkaEventDispatcher(servers:String, topic:String, var registrations: Seq[
     }
   }
 
-  def handle(ce: CommitedEvent): Future[Unit] = {
+  def handle(ce: CommittedEvent): Future[Unit] = {
     // Publish to registrations
     // These might be done in parallel!
     val all = registrations.map(_.handle(ce))
