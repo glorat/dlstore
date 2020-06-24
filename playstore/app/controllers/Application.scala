@@ -185,7 +185,7 @@ class Application @Inject()(cc: ControllerComponents)(implicit ec: ExecutionCont
       })
 
   }
-  def doChangeName() = messagesAction.async { implicit request: MessagesRequest[AnyContent] =>
+  def doChangeName() = Action.async { implicit request =>
     renameForm.bindFromRequest.fold(
       formWithErrors => {
         val errs = formWithErrors.errors
@@ -193,6 +193,7 @@ class Application @Inject()(cc: ControllerComponents)(implicit ec: ExecutionCont
         scala.concurrent.Future(Redirect("/"))
       },
       formcmd => {
+
         val ret = svcs.cmds.receive(formcmd)
         ret.map(x => Redirect("/"))
       })
