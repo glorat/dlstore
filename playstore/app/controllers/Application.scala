@@ -1,9 +1,10 @@
 package controllers
 
+import akka.actor.ActorSystem
+import javax.inject.Inject
 import net.glorat.cqrs._
 import net.glorat.cqrs.example._
-
-import play.api._
+import play.api.Logger
 import play.api.data.Forms._
 import play.api.data._
 import play.api.data.format.Formatter
@@ -11,6 +12,7 @@ import play.api.mvc._
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.concurrent.CustomExecutionContext
 
 object CustomMappings {
 
@@ -36,14 +38,15 @@ object CustomMappings {
   def uuid: Mapping[java.util.UUID] = Forms.of[java.util.UUID](uuidFormatter)
 }
 
-object Application extends Controller {
+class Application @Inject()(cc: ControllerComponents)(implicit ec: ExecutionContext)
+  extends AbstractController(cc)
+    with play.api.i18n.I18nSupport {
+  val logger = Logger(this.getClass)
   // No command should take that long to run!
   // TODO: But make this all async!
   implicit val actorTimeout: akka.util.Timeout = 1 second
 
-  implicit val ec:ExecutionContext = play.api.libs.concurrent.Execution.Implicits.defaultContext
-
-  val svcs = Environment
+  val svcs = new controllers.Environment
   val read = svcs.read
 
   // Forms that wrap commands
@@ -88,22 +91,24 @@ object Application extends Controller {
         Future.successful(Nil)
       }
     }
-    ret.onComplete(_ => Logger.info("Application init completed"))
+    ret.onComplete(_ => logger.info("Application init completed"))
     ret
   }
 
   def index = Action {
-    Logger.info("index requested")
+    logger.info("index requested")
     val items = read.getInventoryItems
     Ok(views.html.index(items))
   }
 
-  def add = Action {
+  def add = Action { implicit request =>
     Ok(views.html.add(addForm))
   }
-  def changename = Action { Ok(views.html.changename(renameForm)) }
+  def changename = Action { implicit request =>
+    Ok(views.html.changename(renameForm))
+  }
 
-  def rename(id: String) = Action {
+  def rename(id: String) = Action { implicit request =>
     val id2 = java.util.UUID.fromString(id)
     val item = read.getInventoryItemDetails(id2)
     if (item.isDefined)
@@ -112,7 +117,7 @@ object Application extends Controller {
       NotFound
   }
 
-  def detail(id: String) = Action {
+  def detail(id: String) = Action { implicit request =>
     val id2 = java.util.UUID.fromString(id)
     val item = read.getInventoryItemDetails(id2)
     if (item.isDefined)
@@ -133,7 +138,7 @@ object Application extends Controller {
     userForm.bindFromRequest.fold(
       formWithErrors => {
         val errs = formWithErrors.errors
-        errs.foreach(e => Logger.warn(e.message))
+        errs.foreach(e => logger.warn(e.message))
         scala.concurrent.Future(Redirect("/"))
       },
       formcmd => {
@@ -169,7 +174,7 @@ object Application extends Controller {
     removeForm.bindFromRequest.fold(
       formWithErrors => {
         val errs = formWithErrors.errors
-        errs.foreach(e => Logger.warn(e.message))
+        errs.foreach(e => logger.warn(e.message))
         scala.concurrent.Future(Redirect("/"))
       },
       formcmd => {
@@ -182,7 +187,7 @@ object Application extends Controller {
     renameForm.bindFromRequest.fold(
       formWithErrors => {
         val errs = formWithErrors.errors
-        errs.foreach(e => Logger.warn(e.message))
+        errs.foreach(e => logger.warn(e.message))
         scala.concurrent.Future(Redirect("/"))
       },
       formcmd => {

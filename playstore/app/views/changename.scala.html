@@ -1,7 +1,9 @@
-@(form : Form[net.glorat.cqrs.example.RenameInventoryItem])
+@(form : Form[net.glorat.cqrs.example.RenameInventoryItem])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @main("Rename item") {
 @helper.form(action = routes.Application.doChangeName) {
+
+  @helper.CSRF.formField
   <input type="hidden" name="id" value="@form.data.get("id")">
   <input type="hidden" name="version" value="@form.data.get("version")">
   

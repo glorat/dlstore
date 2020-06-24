@@ -1,6 +1,6 @@
 package net.glorat.cqrs
 
-import com.novus.salat.annotations.raw.Salat
+import salat.annotations.Salat
 
 // All these should be immutable value objects so that we can safely serialize etc.
 trait Message extends Product // Product encourages use of case class

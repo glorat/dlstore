@@ -7,10 +7,7 @@ import net.glorat.ledger.{KafkaEventDispatcher, KafkaLedger}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object Environment {
-
-  implicit val ec:ExecutionContext = play.api.libs.concurrent.Execution.Implicits.defaultContext
-
+class Environment()(implicit val ec:ExecutionContext) {
   val kafka = new KafkaServer()
   kafka.startup()
   val kafkaPort = kafka.kafkaPort

@@ -1,8 +1,9 @@
-@(form : Form[net.glorat.cqrs.example.CreateInventoryItem])
+@(form : Form[net.glorat.cqrs.example.CreateInventoryItem])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @main("Add new item") {
 
 @helper.form(action = routes.Application.doAdd) {
+  @helper.CSRF.formField
   @helper.inputText(form("name"))
   <button name="submit">Submit</button>
 }
