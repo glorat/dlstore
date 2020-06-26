@@ -8,6 +8,11 @@ trait Repository {
   def getById[T <: AggregateRoot: ClassTag](id: GUID, tmpl: T): T
 }
 
-trait RepositoryExt extends Repository {
+trait RepositoryWithSingleStream extends Repository {
   def allCommittedEvents: Seq[CommittedEvent]
+}
+
+trait RepositoryWithEntityStream extends Repository {
+  def purge(id: GUID): Unit = ???
+  def getAllCommits(id: GUID) : Seq[CommittedEvent]
 }
