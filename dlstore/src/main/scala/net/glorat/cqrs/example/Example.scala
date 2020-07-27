@@ -18,6 +18,14 @@ case class ItemsCheckedInToInventory(id: GUID, count: Int) extends DomainEvent
 case class ItemsRemovedFromInventory(id: GUID, count: Int) extends DomainEvent
 
 object InventoryItem {
+  val allEventTypes = List(
+    classOf[InventoryItemCreated],
+    classOf[InventoryItemRenamed],
+    classOf[InventoryItemDeactivated],
+    classOf[ItemsCheckedInToInventory],
+    classOf[ItemsRemovedFromInventory]
+  )
+
   /**
     * Maps initial DomainEvent to a template initial state of the AR
     */
@@ -120,6 +128,11 @@ class BullShitDatabase() {
   var details = Map[GUID, InventoryItemDetailsDto]()
   var list = List[InventoryItemListDto]()
 
+  def purge():Unit = {
+    details = Map[GUID, InventoryItemDetailsDto]()
+    list = List[InventoryItemListDto]()
+
+  }
 }
 
 class ReadModelFacade(db: BullShitDatabase) {
