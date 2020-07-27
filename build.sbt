@@ -1,6 +1,6 @@
 name := "dlstore-root"
 
-version := "0.2"
+version := "0.3.1"
 
 organization := "net.glorat"
 
