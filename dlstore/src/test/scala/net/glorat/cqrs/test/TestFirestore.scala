@@ -1,9 +1,10 @@
 package net.glorat.cqrs.test
 
 import net.glorat.cqrs.{AggregateRoot, Command, CommittedEvent, DomainEvent, GUID, RepositoryWithEntityStream}
-import net.glorat.cqrs.example.{BullShitDatabase, CheckInItemsToInventory, CreateInventoryItem, InventoryCommandHandlers, InventoryItem, InventoryItemCreated, InventoryItemDetailView, InventoryItemDetailsDto, InventoryItemRenamed, InventoryListView}
+import net.glorat.cqrs.example.{BullShitDatabase, CheckInItemsToInventory, CreateInventoryItem, InventoryCommandHandlers, InventoryItem, InventoryItemCreated, InventoryItemDetailView, InventoryItemDetailsDto, InventoryItemRenamed, InventoryListView, ReadModelFacade}
 import net.glorat.ledger.{ConcurrencyException, FirestoreLedger, FirestoreLedgerConfig, InMemoryLedger, InstantSerializer, UUIDSerializer}
 import org.json4s.{DefaultFormats, ShortTypeHints}
+import org.scalactic.source.Position
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Ignore, Tag}
 
 import scala.concurrent.duration.Duration
@@ -14,7 +15,7 @@ object UsesGoogleEnv extends Tag(if (System.getenv("GOOGLE_APPLICATION_CREDENTIA
 
 
 
-class TestFirestore extends FlatSpec with BeforeAndAfterAll {
+class TestFirestore extends FlatSpec with org.scalatest.BeforeAndAfterEach {
   implicit val ec :ExecutionContext = ExecutionContext.global
   val hints = ShortTypeHints(InventoryItem.allEventTypes)
   implicit val formats = DefaultFormats.withHints(hints) + UUIDSerializer + InstantSerializer
@@ -22,6 +23,7 @@ class TestFirestore extends FlatSpec with BeforeAndAfterAll {
   val firestoreConfig = FirestoreLedgerConfig("https://gainstrack-poc.firebaseio.com", "test_users", "test_records")
 
   val bdb = new BullShitDatabase()
+  val read = new ReadModelFacade(bdb)
   val reads = Seq(new InventoryItemDetailView(bdb), new InventoryListView(bdb))
 
   val rep = if (System.getenv("GOOGLE_APPLICATION_CREDENTIALS")!=null) {
@@ -37,8 +39,7 @@ class TestFirestore extends FlatSpec with BeforeAndAfterAll {
     }
   }
 
-
-  override def beforeAll = {
+  override def beforeEach: Unit = {
     rep.purge(id)
     bdb.purge()
   }
@@ -59,18 +60,20 @@ class TestFirestore extends FlatSpec with BeforeAndAfterAll {
 
 
     sendCommand(CreateInventoryItem(id, "test"))
-    //val detail = read.getInventoryItemDetails(id).get
+    assert(rep.getAllCommits(id).length == 1)
+    val detail = read.getInventoryItemDetails(id).get
 
-    // assert(InventoryItemDetailsDto(id, "test", 0, 1) == detail)
+    assert(InventoryItemDetailsDto(id, "test", 0, 1) == detail)
+
     val created = rep.getById(id, new InventoryItem)
-    //assert(created.getRevision == detail.version)
-    //assert(1 == detail.version)
+    assert(created.getRevision == detail.version)
+    assert(1 == detail.version)
     sendCommand(CheckInItemsToInventory(id, 10, 1))
     sendCommand(CheckInItemsToInventory(id, 20, 2))
 
-    //val evs = store.advanced.getFrom(0).flatMap(_.events).map(em => em.body.asInstanceOf[DomainEvent])
-    //evs.foreach(ev => println(ev))
-    //assert(3 == evs.size)
+    val checkedin = rep.getById(id, new InventoryItem)
+    assert(rep.getAllCommits(id).length == 3)
+
   }
 
   "Inventory example" should "do the obvious" taggedAs UsesGoogleEnv in {
@@ -79,12 +82,12 @@ class TestFirestore extends FlatSpec with BeforeAndAfterAll {
 
 
 
-  ignore should "not allow duplicate or concurrent writes" taggedAs UsesGoogleEnv in {
+  // Test pessimistic concurrency checking behaviour
+  it should "ignore duplicate or concurrent writes" taggedAs UsesGoogleEnv in {
     val f = new FirestoreFixture("two")
     example(f)
-    assertThrows[ConcurrencyException] {
-      f.sendCommand(CheckInItemsToInventory(id, 10, 2))
-
-    }
+    assert(rep.getAllCommits(id).length == 3)
+    f.sendCommand(CheckInItemsToInventory(id, 10, 2))
+    assert(rep.getAllCommits(id).length == 3)
   }
 }

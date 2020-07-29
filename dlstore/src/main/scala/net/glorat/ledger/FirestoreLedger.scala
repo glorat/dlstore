@@ -38,7 +38,11 @@ class FirestoreLedger(cfg:FirestoreLedgerConfig) (implicit ec: ExecutionContext,
 
     // asynchronously retrieve all users// asynchronously retrieve all users
 
-    val query = db.collection(cfg.mainCollectionName).document(id.toString).collection(cfg.subCollectionName).get()
+    val query = db.collection(cfg.mainCollectionName)
+      .document(id.toString)
+      .collection(cfg.subCollectionName)
+      .orderBy("streamRevision")
+      .get()
     // ...
     // query.get() blocks on response
     val querySnapshot = query.get
