@@ -15,21 +15,8 @@ import org.json4s.jackson.Serialization.{read, write}
 class FirestoreLedger(cfg:FirestoreLedgerConfig) (implicit ec: ExecutionContext, implicit val formats: Formats) extends RepositoryWithEntityStream {
   val logger = LoggerFactory.getLogger(getClass)
 
-  import com.google.auth.oauth2.GoogleCredentials
-  import com.google.firebase.FirebaseApp
-  import com.google.firebase.FirebaseOptions
   import com.google.cloud.firestore.Firestore
   import com.google.firebase.cloud.FirestoreClient
-  //val serviceAccount = new FileInputStream("path/to/serviceAccountKey.json")
-
-  val options: FirebaseOptions =
-    new FirebaseOptions.Builder()
-      // .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-      .setCredentials(GoogleCredentials.getApplicationDefault())
-      .setDatabaseUrl(cfg.url)
-      .build
-
-  FirebaseApp.initializeApp(options)
 
   val db: Firestore = FirestoreClient.getFirestore
 

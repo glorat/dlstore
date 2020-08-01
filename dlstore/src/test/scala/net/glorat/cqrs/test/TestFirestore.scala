@@ -1,5 +1,7 @@
 package net.glorat.cqrs.test
 
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.firebase.{FirebaseApp, FirebaseOptions}
 import net.glorat.cqrs.{AggregateRoot, Command, CommittedEvent, DomainEvent, GUID, RepositoryWithEntityStream}
 import net.glorat.cqrs.example.{BullShitDatabase, CheckInItemsToInventory, CreateInventoryItem, InventoryCommandHandlers, InventoryItem, InventoryItemCreated, InventoryItemDetailView, InventoryItemDetailsDto, InventoryItemRenamed, InventoryListView, ReadModelFacade}
 import net.glorat.ledger.{ConcurrencyException, FirestoreLedger, FirestoreLedgerConfig, InMemoryLedger, InstantSerializer, UUIDSerializer}
@@ -25,6 +27,16 @@ class TestFirestore extends FlatSpec with org.scalatest.BeforeAndAfterEach {
   val bdb = new BullShitDatabase()
   val read = new ReadModelFacade(bdb)
   val reads = Seq(new InventoryItemDetailView(bdb), new InventoryListView(bdb))
+
+  val options: FirebaseOptions =
+    new FirebaseOptions.Builder()
+      // .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+      .setCredentials(GoogleCredentials.getApplicationDefault())
+      .setDatabaseUrl(firestoreConfig.url)
+      .build
+
+  FirebaseApp.initializeApp(options)
+
 
   val rep = if (System.getenv("GOOGLE_APPLICATION_CREDENTIALS")!=null) {
     val ret = new FirestoreLedger(firestoreConfig)
