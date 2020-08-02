@@ -32,17 +32,16 @@ class TestFirestore extends FlatSpec with org.scalatest.BeforeAndAfterEach {
 //  System.setProperty("https.proxyPort", "8003")
 //  System.setProperty("com.google.api.client.should_use_proxy", "true")
 
-  val options: FirebaseOptions =
-    new FirebaseOptions.Builder()
-      // .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-      .setCredentials(GoogleCredentials.getApplicationDefault())
-      .setDatabaseUrl(firestoreConfig.url)
-      .build
-
-  FirebaseApp.initializeApp(options)
-
-
   val rep = if (System.getenv("GOOGLE_APPLICATION_CREDENTIALS")!=null) {
+    val options: FirebaseOptions =
+      new FirebaseOptions.Builder()
+        // .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+        .setCredentials(GoogleCredentials.getApplicationDefault())
+        .setDatabaseUrl(firestoreConfig.url)
+        .build
+
+    FirebaseApp.initializeApp(options)
+    
     val ret = new FirestoreLedger(firestoreConfig)
     ret.listen[DomainEvent](id, reads)
     ret
