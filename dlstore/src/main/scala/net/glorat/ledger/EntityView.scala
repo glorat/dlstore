@@ -36,12 +36,14 @@ class EntityView(registry : DomainEvent=>AggregateRoot) extends EventStreamRecei
     Future.successful()
   }
 
-  def getById[T <: AggregateRoot : ClassTag](id: GUID, tmpl: T): T = {
+  def getByIdOpt[T <: AggregateRoot : ClassTag](id: GUID, tmpl: T): Option[T] = {
     //entities.getOrElse(id, tmpl) asInstanceOf[T]
     if (entities.contains(id)) {
       val m = entities(id)
       tmpl.loadFromMemento(m.state, id, m.revision)
+      Some(tmpl)
+    } else {
+      None
     }
-    tmpl
   }
 }

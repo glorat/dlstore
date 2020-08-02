@@ -121,12 +121,6 @@ class FirestoreLedger(cfg:FirestoreLedgerConfig) (implicit ec: ExecutionContext,
     ret.map(_ => ())
   }
 
-  // TODO: This is to be deprecated because the getOrElse is not safe
-  def getById[T <: AggregateRoot](id: GUID, tmpl: T)(implicit evidence$1: ClassTag[T]): T = {
-    getByIdOpt(id, tmpl).getOrElse(tmpl)
-  }
-
-
   def getByIdOpt[T <: AggregateRoot](id: GUID, tmpl: T)(implicit evidence$1: ClassTag[T]): Option[T] = {
     try {
       val cevs = readLinesForId[DomainEvent](id)
@@ -142,7 +136,12 @@ class FirestoreLedger(cfg:FirestoreLedgerConfig) (implicit ec: ExecutionContext,
           }
         }
       })
-      Some(tmpl)
+      // Firestore returns empty events but no errors on NotFound so we need to deal with it
+      if (tmpl.id != id) {
+        None
+      } else {
+        Some(tmpl)
+      }
     }
     catch {
       case e: IOException => {

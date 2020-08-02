@@ -3,6 +3,7 @@ package net.glorat.ledger
 import net.glorat.cqrs._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 class InMemoryDispatcher(store:RepositoryWithSingleStream, var registrations: Seq[EventStreamReceiver])(implicit val ec:ExecutionContext)
 extends Logging{
@@ -61,7 +62,8 @@ class InMemoryLedger(streamToRevision:Option[GUID=>Int], registry:DomainEvent=>A
     Future.sequence(foo).map(_ => ())
   }
 
-  override def getById[T <: AggregateRoot : ClassManifest](id: GUID, tmpl: T): T = {
-    entityView.getById(id, tmpl)
+  override def getByIdOpt[T <: AggregateRoot : ClassTag](id: GUID, tmpl: T): Option[T] = {
+    entityView.getByIdOpt(id, tmpl)
   }
+
 }

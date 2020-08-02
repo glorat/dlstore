@@ -43,8 +43,12 @@ class KafkaLedger(servers:String, topic:String, streamToRevision:Option[GUID=>In
     // TODO: Check if we have arrived, rather than rely on flush?
   }
 
+  def getByIdOpt[T <: AggregateRoot : ClassTag](id: GUID, tmpl: T): Option[T] = {
+    entityView.getByIdOpt(id, tmpl)
+  }
+
   override def getById[T <: AggregateRoot : ClassTag](id: GUID, tmpl: T): T = {
-    entityView.getById(id, tmpl)
+    this.getByIdOpt(id, tmpl).getOrElse(tmpl)
   }
 
 

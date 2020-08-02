@@ -91,4 +91,10 @@ class TestCQRS extends FlatSpec with BeforeAndAfterAll {
 
     }
   }
+
+  it should "return not found for unsaved repo entities" in {
+    val f = new MyFixture("two")
+    val ret = f.rep.getByIdOpt(java.util.UUID.randomUUID(), new InventoryItem())
+    assert (ret.isEmpty)
+  }
 }

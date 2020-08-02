@@ -28,6 +28,10 @@ class TestFirestore extends FlatSpec with org.scalatest.BeforeAndAfterEach {
   val read = new ReadModelFacade(bdb)
   val reads = Seq(new InventoryItemDetailView(bdb), new InventoryListView(bdb))
 
+//  System.setProperty("https.proxyHost", "localhost")
+//  System.setProperty("https.proxyPort", "8003")
+//  System.setProperty("com.google.api.client.should_use_proxy", "true")
+
   val options: FirebaseOptions =
     new FirebaseOptions.Builder()
       // .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -47,7 +51,7 @@ class TestFirestore extends FlatSpec with org.scalatest.BeforeAndAfterEach {
     new RepositoryWithEntityStream() {
       override def getAllCommits(id: GUID): Seq[CommittedEvent] = ???
       override def save(aggregate: AggregateRoot, expectedVersion: Int): Future[Unit] = ???
-      override def getById[T <: AggregateRoot : ClassTag](id: GUID, tmpl: T): T = ???
+      override def getByIdOpt[T <: AggregateRoot : ClassTag](id: GUID, tmpl: T): Option[T] = ???
     }
   }
 
@@ -101,5 +105,10 @@ class TestFirestore extends FlatSpec with org.scalatest.BeforeAndAfterEach {
     assert(rep.getAllCommits(id).length == 3)
     f.sendCommand(CheckInItemsToInventory(id, 10, 2))
     assert(rep.getAllCommits(id).length == 3)
+  }
+
+  it should "return not found for unsaved repo entities" in {
+    val ret = rep.getByIdOpt(java.util.UUID.randomUUID(), new InventoryItem())
+    assert (ret.isEmpty)
   }
 }
