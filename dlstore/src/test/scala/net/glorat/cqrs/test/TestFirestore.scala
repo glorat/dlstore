@@ -50,7 +50,8 @@ class TestFirestore extends FlatSpec with org.scalatest.BeforeAndAfterEach {
     new RepositoryWithEntityStream() {
       override def getAllCommits(id: GUID): Seq[CommittedEvent] = ???
       override def save(aggregate: AggregateRoot, expectedVersion: Int): Future[Unit] = ???
-      override def getByIdOpt[T <: AggregateRoot : ClassTag](id: GUID, tmpl: T): Option[T] = ???
+      override def getByIdOpt[T <: AggregateRoot : ClassTag](id: GUID, tmpl: T): Option[T] = None
+      override def purge(id: GUID): Unit = {}
     }
   }
 
@@ -106,7 +107,7 @@ class TestFirestore extends FlatSpec with org.scalatest.BeforeAndAfterEach {
     assert(rep.getAllCommits(id).length == 3)
   }
 
-  it should "return not found for unsaved repo entities" in {
+  it should "return not found for unsaved repo entities" taggedAs UsesGoogleEnv in {
     val ret = rep.getByIdOpt(java.util.UUID.randomUUID(), new InventoryItem())
     assert (ret.isEmpty)
   }
