@@ -6,12 +6,13 @@ import net.glorat.cqrs._
 import net.glorat.cqrs.example._
 import net.glorat.ledger._
 import org.json4s.DefaultFormats
-import org.scalatest.{BeforeAndAfterAll, FlatSpec}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.flatspec.AnyFlatSpec
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext}
 
-class TestCQRS extends FlatSpec with BeforeAndAfterAll {
+class TestCQRS extends AnyFlatSpec with BeforeAndAfterAll {
   val kafkaServer = new KafkaServer(kafkaConfig = KafkaServer.defaultConfig + (KafkaConfig.AdvertisedHostNameProp -> "localhost"))
   val kafkaPort = kafkaServer.kafkaPort
 

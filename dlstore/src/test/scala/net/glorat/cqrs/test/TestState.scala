@@ -3,8 +3,9 @@ package net.glorat.cqrs.test
 import net.glorat.cqrs._
 import net.glorat.cqrs.example._
 
-import org.scalatest.FlatSpec
-class TestState extends FlatSpec {
+import org.scalatest.flatspec.AnyFlatSpec
+
+class TestState extends AnyFlatSpec {
   val id : GUID = java.util.UUID.fromString("9d9814f5-f531-4d80-8722-f61dcc1679b8")
 
   "Example model" should "do the obvious" in {

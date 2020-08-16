@@ -7,19 +7,21 @@ organization := "net.glorat"
 
 description := "Ledger state machine framework backed by Kafka distributed ledger store"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.12.12"
+
+crossScalaVersions := Seq("2.12.12", "2.13.3")
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 resolvers += Resolver.bintrayRepo("cakesolutions", "maven")
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.0.4" % "test",
+  "org.scalatest" %% "scalatest" % "3.2.0" % "test",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
-  "com.typesafe.akka" %% "akka-actor" % "2.5.3",
+  "com.typesafe.akka" %% "akka-actor" % "2.6.8",
   "org.slf4j" % "log4j-over-slf4j" % "1.7.21" % "test",
-  "net.cakesolutions" %% "scala-kafka-client" % "1.0.0",
-  "net.cakesolutions" %% "scala-kafka-client-testkit" % "1.0.0" % "test",
+  "net.glorat" %% "scala-kafka-client" % "2.4.0-SNAPSHOT",
+  "net.glorat" %% "scala-kafka-client-testkit" % "2.4.0-SNAPSHOT" % "test",
   "com.google.firebase" % "firebase-admin" % "6.13.0",
   "org.json4s"   %% "json4s-jackson" % "3.6.7"
 )

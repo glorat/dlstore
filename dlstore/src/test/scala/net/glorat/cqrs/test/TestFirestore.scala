@@ -6,8 +6,8 @@ import net.glorat.cqrs.{AggregateRoot, Command, CommittedEvent, DomainEvent, GUI
 import net.glorat.cqrs.example.{BullShitDatabase, CheckInItemsToInventory, CreateInventoryItem, InventoryCommandHandlers, InventoryItem, InventoryItemCreated, InventoryItemDetailView, InventoryItemDetailsDto, InventoryItemRenamed, InventoryListView, ReadModelFacade}
 import net.glorat.ledger.{ConcurrencyException, FirestoreLedger, FirestoreLedgerConfig, InMemoryLedger, InstantSerializer, UUIDSerializer}
 import org.json4s.{DefaultFormats, ShortTypeHints}
-import org.scalactic.source.Position
-import org.scalatest.{BeforeAndAfterAll, FlatSpec, Ignore, Tag}
+import org.scalatest.{Ignore, Tag}
+import org.scalatest.flatspec.AnyFlatSpec
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -17,7 +17,7 @@ object UsesGoogleEnv extends Tag(if (System.getenv("GOOGLE_APPLICATION_CREDENTIA
 
 
 
-class TestFirestore extends FlatSpec with org.scalatest.BeforeAndAfterEach {
+class TestFirestore extends AnyFlatSpec with org.scalatest.BeforeAndAfterEach {
   implicit val ec :ExecutionContext = ExecutionContext.global
   val hints = ShortTypeHints(InventoryItem.allEventTypes)
   implicit val formats = DefaultFormats.withHints(hints) + UUIDSerializer + InstantSerializer

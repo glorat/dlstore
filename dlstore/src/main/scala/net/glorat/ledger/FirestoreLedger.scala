@@ -36,7 +36,7 @@ class FirestoreLedger(cfg:FirestoreLedgerConfig) (implicit ec: ExecutionContext,
     val documents = querySnapshot.getDocuments
     documents.asScala.map(document =>
       documentToCommittedEvent[T](document)
-    )
+    ).toSeq
 
   }
 
@@ -60,8 +60,8 @@ class FirestoreLedger(cfg:FirestoreLedgerConfig) (implicit ec: ExecutionContext,
           return
         }
 
-        import scala.collection.JavaConversions._
-        for (dc <- snapshots.getDocumentChanges) {
+        import scala.collection.JavaConverters._
+        for (dc <- snapshots.getDocumentChanges.asScala) {
           dc.getType match {
             case DocumentChange.Type.ADDED => {
               // System.out.println("New: " + dc.getDocument.getData)
