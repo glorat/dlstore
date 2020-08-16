@@ -20,8 +20,8 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.akka" %% "akka-actor" % "2.6.8",
   "org.slf4j" % "log4j-over-slf4j" % "1.7.21" % "test",
-  "net.glorat" %% "scala-kafka-client" % "2.4.0-SNAPSHOT",
-  "net.glorat" %% "scala-kafka-client-testkit" % "2.4.0-SNAPSHOT" % "test",
+  "net.glorat" %% "scala-kafka-client" % "2.4.0-1",
+  "net.glorat" %% "scala-kafka-client-testkit" % "2.4.0-1" % "test",
   "com.google.firebase" % "firebase-admin" % "6.13.0",
   "org.json4s"   %% "json4s-jackson" % "3.6.7"
 )
