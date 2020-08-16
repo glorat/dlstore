@@ -1,7 +1,9 @@
 dlstore
 ================
 
-Ledger state machine framework backed by Kafka distributed ledger store
+Ledger state machine framework backed by different distributed ledger stores including
+- Kafka
+- Firestore
 
 Comes with a website demo that can be run with
 ```
